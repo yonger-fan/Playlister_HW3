@@ -60,7 +60,7 @@ export const useGlobalStore = () => {
             // CREATE A NEW LIST
             case GlobalStoreActionType.CREATE_NEW_LIST: {
                 return setStore({
-                    idNamePairs: store.idNamePairs,
+                    idNamePairs: payload.idNamePairs,
                     currentList: payload,
                     newListCounter: store.newListCounter + 1,
                     listNameActive: false
@@ -149,6 +149,37 @@ export const useGlobalStore = () => {
             type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
             payload: {}
         });
+    }
+
+    store.createNewList = function () {
+        async function asyncCreateNewList() {
+            let newName = "Untitled";
+
+            let newList = {
+                name: newName,
+                songs: []
+            }
+            let response = await api.createPlaylist(newList);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                async function getListPairs() {
+                    response = await api.getPlaylistPairs();
+                    if (response.data.success) {
+                        let pairsArray = response.data.idNamePairs;
+                        storeReducer({
+                            type: GlobalStoreActionType.CHANGE_LIST_NAME,
+                            payload: {
+                                idNamePairs: pairsArray,
+                                playlist: playlist
+                            }
+                        });
+                    }
+                }
+                getListPairs(playlist);
+            }
+
+        }
+        asyncCreateNewList();
     }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
