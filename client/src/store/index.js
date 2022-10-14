@@ -18,6 +18,7 @@ export const GlobalStoreActionType = {
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
+    ADD_NEW_SONG: "ADD_NEW_SONG",
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -66,6 +67,17 @@ export const useGlobalStore = () => {
                     listNameActive: false
                 })
             }
+
+            // CREATE A NEW LIST
+            case GlobalStoreActionType.ADD_NEW_SONG: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: payload.playlist,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false
+                })
+            }
+
             // GET ALL THE LISTS SO WE CAN PRESENT THEM
             case GlobalStoreActionType.LOAD_ID_NAME_PAIRS: {
                 return setStore({
@@ -102,6 +114,16 @@ export const useGlobalStore = () => {
                     listNameActive: true
                 });
             }
+
+            case GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: payload,
+                    newListCounter: store.newListCounter,
+                    listNameActive: true
+                });
+            }
+
             default:
                 return store;
         }
@@ -121,20 +143,12 @@ export const useGlobalStore = () => {
                 async function updateList(playlist) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
                     if (response.data.success) {
-                        async function getListPairs(playlist) {
-                            response = await api.getPlaylistPairs();
-                            if (response.data.success) {
-                                let pairsArray = response.data.idNamePairs;
-                                storeReducer({
-                                    type: GlobalStoreActionType.CHANGE_LIST_NAME,
-                                    payload: {
-                                        idNamePairs: pairsArray,
-                                        playlist: playlist
+                        storeReducer({
+                            type: GlobalStoreActionType.CHANGE_LIST_NAME,
+                            payload: {
+                                playlist: playlist
                                     }
-                                });
-                            }
-                        }
-                        getListPairs(playlist);
+                        });
                     }
                 }
                 updateList(playlist);
@@ -180,6 +194,43 @@ export const useGlobalStore = () => {
 
         }
         asyncCreateNewList();
+    }
+
+    store.addSong = function () {
+        async function asyncAddNewSong() {
+         
+            let newName = "Untitled";
+            let newArtist = "Undefined";
+            let newId = "dQw4w9WgXcQ";
+            let id = store.currentList._id;
+
+            let newSong = {
+                title : newName,
+                artist : newArtist,
+                youTubeId : newId
+            }
+
+            let response = await api.getPlaylistById(id);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                let len = playlist.songs.length;
+                playlist.songs[len] = newSong;
+                async function updateList(playlist) {
+                    response = await api.updatePlaylistById(id, playlist);
+                    //playlist = response.data.playlist;
+                    if (response.data.success) {
+                        storeReducer({
+                            type: GlobalStoreActionType.ADD_NEW_SONG,
+                            payload: {
+                                playlist: playlist
+                            }
+                        });
+                    }
+                }
+                updateList(playlist);
+            }
+        }
+        asyncAddNewSong();
     }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
