@@ -15,7 +15,7 @@ function SongCard(props) {
 
     function handleClick (event) {
         event.stopPropagation();
-        store.editSong(index, song);
+        store.editSong(index,song);
     }
 
 

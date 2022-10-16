@@ -4,7 +4,7 @@ import { GlobalStoreContext } from '../store'
 
 function DeleteListModal () {
         const { store } = useContext(GlobalStoreContext);
-        let markeDeletion = store.markListDeletion;
+        let markeDeletion = store.markDeletion;
         let id = store.markListDeleteId;
         let name = "";
         if (markeDeletion) {
@@ -27,7 +27,7 @@ function DeleteListModal () {
                 class="modal" 
                 id="delete-list-modal" 
                 data-animation="slideInOutLeft">
-                    <div class="modal-root" id='verify-delete-list-root'>
+                    <div class="modal-dialog" id='verify-delete-list-root'>
                         <div class="modal-north">
                             Delete playlist?
                         </div>

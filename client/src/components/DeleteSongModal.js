@@ -26,7 +26,7 @@ function DeleteSongModal () {
                 class="modal" 
                 id="delete-song-modal" 
                 data-animation="slideInOutLeft">
-                    <div class="modal-root" id='verify-remove-song-root'>
+                    <div class="modal-dialog" id='verify-remove-song-root'>
                         <div class="modal-north">
                             Remove Song?
                         </div>
