@@ -4,8 +4,8 @@ import { GlobalStoreContext } from '../store'
 
 function DeleteSongModal () {
     const { store } = useContext(GlobalStoreContext);
-    let index = store.markListDeleteIndex;
-    let list = store.markSongDeletion;
+    let index = store.markSongDeleteIndex;
+    let list = store.markListDeletion;
     let name = "";
     if (list) {
         name = list.songs[index].title;
@@ -26,7 +26,7 @@ function DeleteSongModal () {
                 class="modal" 
                 id="delete-song-modal" 
                 data-animation="slideInOutLeft">
-                    <div class="modal-root" id='verify-delete-list-root'>
+                    <div class="modal-root" id='verify-remove-song-root'>
                         <div class="modal-north">
                             Remove Song?
                         </div>

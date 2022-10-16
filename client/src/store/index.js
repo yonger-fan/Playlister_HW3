@@ -1,6 +1,7 @@
 import { createContext, useState } from 'react'
 import jsTPS from '../common/jsTPS'
 import api from '../api'
+import MoveSong_Transaction from '../transactions/MoveSong_Transaction';
 export const GlobalStoreContext = createContext({});
 /*
     This is our global data store. Note that it uses the Flux design pattern,
@@ -22,7 +23,8 @@ export const GlobalStoreActionType = {
     MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
     LIST_FOR_DELETION:"LIST_FOR_DELETION",
     MARK_SONG_FOR_DELETION: "MARK_SONG_FOR_DELETION",
-    DELETE_SONG:"DELETE_SONG"
+    DELETE_SONG:"DELETE_SONG",
+    DRAG_LIST:"DRAG_LIST"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -39,8 +41,7 @@ export const useGlobalStore = () => {
         listNameActive: false,
         markListDeletion: null,
         markListDeleteId: 0,
-        markSongDeletion: null,
-        markListDeleteIndex: 0
+        markSongDeleteIndex: 0
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
@@ -114,8 +115,8 @@ export const useGlobalStore = () => {
                     currentList: store.currentList,
                     newListCounter: store.newListCounter,
                     listNameActive: false,
-                    markListDeletion: payload,
-                    markListDeleteIndex: store.markListDeleteIndex
+                    markSongDeleteIndex: payload.markListDeleteIndex,
+                    markListDeletion: payload.markListDeletion
                 });
             }
 
@@ -152,16 +153,16 @@ export const useGlobalStore = () => {
                 });
             }
 
-            // START EDITING A LIST NAME
-            case GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE: {
+            case GlobalStoreActionType.DRAG_LIST: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
-                    currentList: payload,
+                    currentList: payload.playlist,
                     newListCounter: store.newListCounter,
-                    listNameActive: true
+                    listNameActive: false,
                 });
             }
 
+            // START EDITING A LIST NAME
             case GlobalStoreActionType.SET_LIST_NAME_EDIT_ACTIVE: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
@@ -342,7 +343,10 @@ export const useGlobalStore = () => {
                 if (response.data.success) {
                     storeReducer({
                         type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
-                        payload: playlist
+                        payload: {
+                        markListDeleteIndex: index,
+                        markListDeletion : playlist
+                        }
                     })
                 }
             }
@@ -396,6 +400,10 @@ export const useGlobalStore = () => {
             }
         }
         asyncDeleteList(id)
+    }
+
+    store.editSong = function (index) {
+
     }
 
     store.showDeleteListModal = function () {

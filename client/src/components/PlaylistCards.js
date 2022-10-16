@@ -21,6 +21,7 @@ function PlaylistCards() {
                     key={'playlist-song-' + (index)}
                     index={index}
                     song={song}
+                    
                 />
             ))
         }

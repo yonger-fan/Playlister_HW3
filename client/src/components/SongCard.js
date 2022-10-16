@@ -13,12 +13,18 @@ function SongCard(props) {
         store.deleteSong(index);
     }
 
+    function handleClick (event) {
+        event.stopPropagation();
+        store.editSong(index, song);
+    }
+
 
     return (
         <div
             key={index}
             id={'song-' + index + '-card'}
             className={cardClass}
+            onDoubleClick={handleClick}
         >
             {index + 1}.
             <a
