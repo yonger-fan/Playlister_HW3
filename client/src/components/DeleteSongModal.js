@@ -17,7 +17,7 @@ function DeleteSongModal () {
     }
 
     function ConfirmDelete() {
-        store.remove(index);
+        store.addRemoveSongTransaction(index);
         store.hideDeleteSongModal();
     }
     

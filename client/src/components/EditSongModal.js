@@ -11,7 +11,7 @@ function EditSongModal () {
     }
 
     function editSongConfirm() {
-        store.edit(index);
+        store.editMarkedSong(index);
         store.hideEditSongModal();
     }
        
