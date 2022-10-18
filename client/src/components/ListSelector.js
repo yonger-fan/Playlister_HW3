@@ -11,6 +11,15 @@ const ListSelector = () => {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
 
+    let enabledButtonClass = "playlister-button";
+    if (store.listNameActive) {
+        enabledButtonClass = "playlister-button-disabled";
+    }
+
+    if (store.currentList != null ) {
+        enabledButtonClass = "playlister-button-disabled";
+    }
+
     useEffect(() => {
         store.loadIdNamePairs();
     }, []);
@@ -31,12 +40,12 @@ const ListSelector = () => {
     return (
         <div id="playlist-selector">
             <div id="list-selector-list">
-            <div id="playlist-selector-heading">
+            <div id="playlist-selector-heading" class = "heading">
                 <input
                     type="button"
                     id="add-list-button"
                     onClick={handleCreateNewList}
-                    className="playlister-button"
+                    className={enabledButtonClass}
                     value="+" />
                 Your Lists
             </div>                {
