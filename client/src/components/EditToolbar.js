@@ -11,9 +11,6 @@ function EditToolbar() {
     const { store } = useContext(GlobalStoreContext);
     const history = useHistory();
 
-    if (store.isRunned){
-    store.callKeyDown();
-    }
 
     let canAddSong = store.currentList !== null;
     let canClose = store.currentList !== null;
