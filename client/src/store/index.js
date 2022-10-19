@@ -30,8 +30,9 @@ export const GlobalStoreActionType = {
     DRAG_LIST:"DRAG_LIST",
     MARK_SONG_FOR_EDITION: "MARK_SONG_FOR_EDITION",
     EDIT_SONG: "EDIT_SONG",
-    HIDE_LIST_MODAL: "HIDE_LIST_MODAL",
-    SET_STATE: "SET_STATE"
+    HIDE_DELETE_MODAL: "HIDE_LIST_MODAL",
+    SET_STATE: "SET_STATE",
+    HIDE_MODAL: "HIDE_MODAL",
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -56,6 +57,8 @@ export const useGlobalStore = () => {
         oldArtist: null,
         oldYouTubeId: null,
         isRunned : false,
+        isEdition : false,
+        isDeleting : false
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
@@ -117,8 +120,9 @@ export const useGlobalStore = () => {
                     currentList: store.currentList,
                     newListCounter: store.newListCounter,
                     listNameActive: false,
-                    markDeletion: payload,
-                    markListDeleteId: payload._id
+                    markDeletion: payload.playlist,
+                   //markListDeleteId: payload.playlist._id,
+                    isDeleting : payload.isDeleting
                 });
             }
 
@@ -130,7 +134,8 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     markSongDeleteIndex: payload.markListDeleteIndex,
-                    markListDeletion: payload.markListDeletion
+                    markListDeletion: payload.markListDeletion,
+                    isEdition: payload.isEdition
                 });
             }
 
@@ -145,7 +150,8 @@ export const useGlobalStore = () => {
                     markListEdit: payload.markListEdit,
                     oldTitle : payload.oldTitle,
                     oldArtist: payload.oldArtist,
-                    oldYouTubeId: payload.oldYouTubeId
+                    oldYouTubeId: payload.oldYouTubeId,
+                    isEdition: payload.isEdition
                 });
             }
 
@@ -157,7 +163,33 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     markEditSongIndex: 0,
-                    markListEdit: null
+                    markListEdit: null,
+                    isEdition: payload.isEdition
+                });
+            }
+
+            // PREPARE TO Edit A LIST
+            case GlobalStoreActionType.HIDE_MODAL: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false,
+                    markEditSongIndex: 0,
+                    markListEdit: null,
+                    isEdition: payload.isEdition
+                });
+            }
+
+            // PREPARE TO Edit A LIST
+            case GlobalStoreActionType.HIDE_DELETE_MODAL: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false,
+                    markEditSongIndex: 0,
+                    isDeleting: payload.isDeleting
                 });
             }
 
@@ -169,7 +201,8 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     markListDeletion: null,
-                    markListDeleteIndex: 0
+                    markListDeleteIndex: 0,
+                    isEdition: payload.isEdition
                 });
             }
 
@@ -180,7 +213,8 @@ export const useGlobalStore = () => {
                     newListCounter: store.newListCounter,
                     listNameActive: false,
                     markListDeletion: null,
-                    markListDeleteId: 0
+                    markListDeleteId: 0,
+                    isDeleting : payload.isDeleting
                 });
             }
 
@@ -387,7 +421,10 @@ export const useGlobalStore = () => {
                 if (response.data.success) {
                     storeReducer({
                         type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
-                        payload: playlist
+                        payload: {
+                        playlist : playlist,
+                        isDeleting: true
+                        }
                     })
                 }
             }
@@ -406,7 +443,8 @@ export const useGlobalStore = () => {
                         type: GlobalStoreActionType.MARK_SONG_FOR_DELETION,
                         payload: {
                         markListDeleteIndex: index,
-                        markListDeletion : playlist
+                        markListDeletion : playlist,
+                        isEdition:true
                         }
                     })
                 }
@@ -428,7 +466,8 @@ export const useGlobalStore = () => {
                         storeReducer({
                             type: GlobalStoreActionType.DELETE_SONG,
                             payload: {
-                                playlist: playlist
+                                playlist: playlist,
+                                isEdition:false
                             }
                         });
                     }
@@ -481,7 +520,8 @@ export const useGlobalStore = () => {
                             type: GlobalStoreActionType.LIST_FOR_DELETION,
                             payload: {
                                idNamePairs: pairsArray,
-                               playlist: playlist
+                               playlist: playlist,
+                               isDeleting: false
                             }
                         })
                     }
@@ -509,7 +549,8 @@ export const useGlobalStore = () => {
                         markListEdit : playlist,
                         oldTitle : t,
                         oldArtist: a,
-                        oldYouTubeId: y
+                        oldYouTubeId: y,
+                        isEdition : true
                         }
                     })
                 }
@@ -543,7 +584,8 @@ export const useGlobalStore = () => {
                         storeReducer({
                             type: GlobalStoreActionType.EDIT_SONG,
                             payload: {
-                                playlist: playlist
+                                playlist: playlist,
+                                isEdition : false
                             }
                         });
                     }
@@ -613,6 +655,12 @@ export const useGlobalStore = () => {
     }
 
     store.hideDeleteListModal = function (){
+        storeReducer({
+            type: GlobalStoreActionType.HIDE_MODAL,
+            payload: {
+                isDeleting: false
+            }
+        });
         let modal = document.getElementById("delete-list-modal");
         modal.classList.remove("is-visible");
     }
@@ -623,6 +671,12 @@ export const useGlobalStore = () => {
     }
     // THIS FUNCTION IS FOR HIDING THE MODAL
     store.hideDeleteSongModal =  function (){
+        storeReducer({
+            type: GlobalStoreActionType.HIDE_MODAL,
+            payload: {
+                isEdition: false
+            }
+        });
         let modal = document.getElementById("delete-song-modal");
         modal.classList.remove("is-visible");
     }
@@ -636,6 +690,12 @@ export const useGlobalStore = () => {
     }
 
     store.hideEditSongModal = function (){
+        storeReducer({
+            type: GlobalStoreActionType.HIDE_MODAL,
+            payload: {
+                isEdition: false
+            }
+        });
         let modal = document.getElementById("edit-song-modal");
         modal.classList.remove("is-visible");
     }

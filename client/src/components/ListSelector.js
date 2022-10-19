@@ -20,6 +20,10 @@ const ListSelector = () => {
         enabledButtonClass = "playlister-button-disabled";
     }
 
+    if (store.isDeleting) {
+        enabledButtonClass = "playlister-button-disabled";
+    }
+
     useEffect(() => {
         store.loadIdNamePairs();
     }, []);

@@ -26,10 +26,12 @@ function EditToolbar() {
     if (!canUndo) enabledUndoButtonClass = "playlister-button-disabled";
     if (!canRedo) enabledRedoButtonClass = "playlister-button-disabled";
     if (!canClose) enabledCloseButtonClass = "playlister-button-disabled";
-    /*if (store.markListDeleteId !== 0) {
+    if (store.isEdition) {
         enabledAddButtonClass = "playlister-button-disabled";
         enabledCloseButtonClass = "playlister-button-disabled";
-    }*/
+        enabledUndoButtonClass = "playlister-button-disabled";
+        enabledRedoButtonClass = "playlister-button-disabled";
+    }
 
 
     function handleUndo() {

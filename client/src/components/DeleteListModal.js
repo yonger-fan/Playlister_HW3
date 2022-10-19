@@ -5,7 +5,10 @@ import { GlobalStoreContext } from '../store'
 function DeleteListModal () {
         const { store } = useContext(GlobalStoreContext);
         let markeDeletion = store.markDeletion;
-        let id = store.markListDeleteId;
+        let id = 0;
+        if (markeDeletion) {
+            id = markeDeletion._id;
+        }
         let name = "";
         if (markeDeletion) {
             name = markeDeletion.name;
